@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Short-Form Video Repurposer Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        input[type="text"],
+        input[type="url"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .templates {
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .templates.show {
+            display: block;
+        }
+        
+        .template-card {
+            background: #f8f9ff;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .template-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .template-content {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            font-family: 'Courier New', monospace;
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+        }
+        
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+        
+        .copy-btn.copied {
+            background: #4caf50;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Video Repurposer</h1>
+            <p>Turn 1 video into 10+ social media posts</p>
+        </div>
+        
+        <div class="content">
+            <div class="info-box">
+                ✅ Works with YouTube, TikTok, Instagram links (optional - paste your title too)
+            </div>
+            
+            <form id="repurposerForm">
+                <div class="form-group">
+                    <label for="videoTitle">Video Title or Main Topic *</label>
+                    <input 
+                        type="text" 
+                        id="videoTitle" 
+                        placeholder="e.g., How to grow on TikTok in 2026"
+                        required
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="videoUrl">Video URL (optional)</label>
+                    <input 
+                        type="url" 
+                        id="videoUrl" 
+                        placeholder="https://youtube.com/... or https://tiktok.com/..."
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="duration">Video Duration *</label>
+                    <select id="duration" required>
+                        <option value="">Select duration...</option>
+                        <option value="short">Short (under 1 min)</option>
+                        <option value="medium">Medium (1-5 min)</option>
+                        <option value="long">Long (5+ min)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="niche">Your Niche/Category *</label>
+                    <select id="niche" required>
+                        <option value="">Select niche...</option>
+                        <option value="business">Business/Entrepreneurship</option>
+                        <option value="personal-growth">Personal Growth</option>
+                        <option value="fitness">Fitness/Health</option>
+                        <option value="finance">Finance/Money</option>
+                        <option value="tech">Technology</option>
+                        <option value="beauty">Beauty/Wellness</option>
+                        <option value="education">Education/Tutorial</option>
+                        <option value="entertainment">Entertainment/Comedy</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <button type="submit">Generate 10 Templates 🊀</button>
+            </form>
+            
+            <div id="templatesContainer" class="templates">
+                <h2 style="margin-bottom: 16px; color: #333;">Your 10 Templates:</h2>
+                <p style="font-size: 12px; color: #999; margin-bottom: 16px;">Click "Copy" to copy each template. Paste directly into your social media!</p>
+                <div id="templatesList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const templates = {
+            default: [
+                {
+                    title: "1. The Hook",
+                    content: "Wait, you've been doing this WRONG the whole time...\n\n[Show surprising moment]\n\nHere's the RIGHT way to do it:"
+                },
+                {
+                    title: "2. Problem/Solution",
+                    content: "If you're struggling with [MAIN PROBLEM]...\n\nMost people try [WRONG METHOD]\n\nBut the real secret is [SOLUTION]"
+                },
+                {
+                    title: "3. Quick Breakdown",
+                    content: "Here's exactly how to [GOAL] in 60 seconds:\n\n[Step 1]\n[Step 2]\n[Step 3]\n\nThat's it. Go implement this now."
+                },
+                {
+                    title: "4. Story/Journey",
+                    content: "I used to think [OLD BELIEF]\n\nThen I discovered [PLOT TWIST]\n\nNow I [RESULT]\n\nHere's what changed..."
+                },
+                {
+                    title: "5. Before/After",
+                    content: "Most people use [OLD METHOD]\n\nBut [NEW METHOD] is 10x better because:\n\n✓ [Reason 1]\n✓ [Reason 2]\n✓ [Reason 3]"
+                },
+                {
+                    title: "6. Controversial Take",
+                    content: "Hot take:\n\n[CONTROVERSIAL OPINION]\n\nHere's why I think this:\n\n[Explanation]\n\nComment if you agree 👇"
+                },
+                {
+                    title: "7. Behind-the-Scenes",
+                    content: "Nobody shows you this part...\n\n[Show process/workspace]\n\nThis is how [PROCESS] actually works\n\nMost people have NO idea"
+                },
+                {
+                    title: "8. Key Quote/Lesson",
+                    content: "\"[POWERFUL QUOTE]\"\n\n- [ATTRIBUTION]\n\nThis changed how I think about [TOPIC]\n\nWhat's your take?"
+                },
+                {
+                    title: "9. Common Mistake",
+                    content: "Stop doing this ❌\n\n[COMMON MISTAKE]\n\nInstead, do [CORRECT WAY]\n\nYou'll see results in days"
+                },
+                {
+                    title: "10. Engagement Question",
+                    content: "Quick question for you:\n\n[YOUR QUESTION]\n\nComment your answer below 👇\n\nI read every single one"
+                }
+            ]
+        };
+        
+        document.getElementById('repurposerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('videoTitle').value;
+            const duration = document.getElementById('duration').value;
+            const niche = document.getElementById('niche').value;
+            
+            const templatesContainer = document.getElementById('templatesContainer');
+            const templatesList = document.getElementById('templatesList');
+            
+            // Clear previous templates
+            templatesList.innerHTML = '';
+            
+            // Generate templates
+            templates.default.forEach((template, index) => {
+                let content = template.content;
+                
+                // Customize based on inputs
+                if (niche === 'business') {
+                    content = content.replace('[MAIN PROBLEM]', 'growing your business');
+                    content = content.replace('[GOAL]', 'scale your revenue');
+                } else if (niche === 'fitness') {
+                    content = content.replace('[MAIN PROBLEM]', 'getting fit');
+                    content = content.replace('[GOAL]', 'transform your body');
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'template-card';
+                card.innerHTML = `
+                    <div class="template-title">${template.title}</div>
+                    <div class="template-content">${content}</div>
+                    <button class="copy-btn" onclick="copyToClipboard(this, '${content.replace(/'/g, "\\'").replace(/\n/g, '\\n')}')">Copy Template</button>
+                `;
+                templatesList.appendChild(card);
+            });
+            
+            templatesContainer.classList.add('show');
+            setTimeout(() => {
+                templatesContainer.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        });
+        
+        function copyToClipboard(btn, text) {
+            // Decode the escaped text
+            const decodedText = text.replace(/\\n/g, '\n').replace(/\\'/g, "'");
+            
+            navigator.clipboard.writeText(decodedText).then(() => {
+                btn.textContent = '✅ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy Template';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
